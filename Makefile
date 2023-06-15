@@ -19,5 +19,5 @@ FN-window.o: FN-window.c FN-window.h
 	gcc -c FN-window.c
 
 clean:
-	rm -rf $(objects) $(bdir)$(name)
+	rm -rf $(objects) $(bdir)/$(name)
 rebuild: clean all 
