@@ -6,7 +6,7 @@ build=-o $(bdir)/$(name)
 bdir=./build
 name=Figurate-number
 ##-------------- object files
-objects=FN-main.o FN-window.o
+objects=FN-main.o FN-window-init.o FN-window-manage.o
 ##-------------- make
 all: FN-main
 
@@ -14,9 +14,11 @@ FN-main: $(objects)
 	gcc $(objects) $(CFLAGS)
 
 FN-main.o: FN-main.c FN-window.h
-	gcc -c FN-main.c
-FN-window.o: FN-window.c FN-window.h
-	gcc -c FN-window.c
+	gcc -c FN-main.c $(debug)
+FN-window-init.o: FN-window-init.c FN-window.h
+	gcc -c FN-window-init.c $(debug)
+FN-window-manage.o: FN-window-manage.c FN-window.h
+	gcc -c FN-window-manage.c $(debug)
 
 clean:
 	rm -rf $(objects) $(bdir)/$(name)
