@@ -15,5 +15,5 @@
 unsigned int textSize(const char* text);
 int keycodeToInt(int lastnumber,int keycode,int);
 unsigned int triangularFormula(int n);
-
+unsigned int uFormula(int n,int option);
 #endif //FN_calcs_H_ end definition

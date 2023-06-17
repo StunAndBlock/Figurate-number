@@ -85,13 +85,14 @@ void keyControl(FN* global,XEvent* event,FNcontrols* controls){
   const char* c;
   char buf[10];
   if(event->xkey.keycode>=FN_XK_1 && event->xkey.keycode<=FN_XK_9){
-
+if(controls->numericKeyPressedinRow<3){
    // fprintf(stderr,"num:%d %d",controls->tempNumber,controls->numericKeyPressedinRow);
    controls->tempNumber=keycodeToInt(controls->tempNumber,event->xkey.keycode,controls->numericKeyPressedinRow);
    sprintf(buf,"%d",controls->tempNumber);
    const char* c=buf;
    controls->numericKeyPressedinRow++;
-   XDrawString(global->dpy,global->menu.numberInput,global->menu.gc[1],MENU_BLOCK_HEIGHT/4,MENU_BLOCK_HEIGHT/4,c,controls->numericKeyPressedinRow);
+   XDrawString(global->dpy,global->menu.numberInput,global->menu.gc[1],55,30,c,controls->numericKeyPressedinRow);
+   }
   } else if (event->xkey.keycode==FN_XK_ENTER){
    // fprintf(stderr,"num:%d %d\n",controls->tempNumber,controls->numericKeyPressedinRow);
     if(controls->numericKeyPressedinRow){
@@ -131,19 +132,73 @@ void triangularGraph(FN* global,int n,unsigned int pointsCount){
     }
   }
   XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
-  
-
-
   free(points);
 }
+void squareGraph(FN* global,int n, unsigned int pointsCount){
+   XPoint* points=(XPoint*)malloc(sizeof(XPoint)*pointsCount);
+  short d=600;
+  short radius=d/60;
+  short offset=d/(n+1);
+  short xoffset=offset;
+  short yoffset=d-offset;
+  //fprintf(stderr,"\n(%d %d %d)\n",offset,pointsCount,n);
+  int r=0;
+  for(int i=0,pointsInRow=n;i<n;i++,pointsInRow--,yoffset-=offset){
+    //points[r].y=yoffset;
+    for(int j=0,xoffset=offset;j<n;j++,xoffset+=offset){
+      points[r].x=xoffset;
+      points[r].y=yoffset;
+      r++;
+      fprintf(stderr,"\n(%d %d)\n", xoffset,yoffset);
+    }
+  }
+  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
+  free(points);
+}
+void pentagonalGraph(FN* global,int n,unsigned int pointsCount){
+  XPoint* points=(XPoint*)malloc(sizeof(XPoint)*pointsCount);
+  short d=600;
+  short radius=d/60;
+  short offset=d/(n+1);
+  short xoffset=offset;
+  short yoffset=d-offset;
+  short xwingoffset=offset/3;
+  short ywingoffset=offset*2/3;
+  //fprintf(stderr,"\n(%d %d %d)\n",offset,pointsCount,n);
+  int r=0;
+  for(int i=0,pointsInRow=n;i<n;i++,pointsInRow--,yoffset-=offset){
+    //points[r].y=yoffset;
+    for(int j=0,xoffset=offset+offset/2*i;j<pointsInRow;j++,xoffset+=offset){
+      points[r].x=xoffset;
+      points[r].y=yoffset;
+      r++;
+     
+    }
+     fprintf(stderr,"\n(%d %d)\n", xoffset,yoffset);
+    for (int j=0,xwingoffset=xoffset-offset/3,ywingoffset=yoffset+offset*2/3;j<pointsInRow-1;j++,xwingoffset-=offset/3,ywingoffset-=offset*2/3){
+      points[r].x=xwingoffset;
+      points[r].y=ywingoffset;
+      r++;
+    }
+  }
+  for(int i=0;i<pointsCount;i++){
+  XDrawArc(global->dpy,global->figure.win,global->menu.gc[1],points[i].x-radius,points[i].y-radius,radius*2,radius*2,0,360*64);
+  }
+  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
+  free(points);
+}
+
+
 void assembleFigure(FN* global,FNcontrols* controls){
   switch(controls->numberOpt){
     case 0:
     triangularGraph(global,controls->numberN,triangularFormula(controls->numberN));
     break;
     case 1:
+    squareGraph(global,controls->numberN,uFormula(controls->numberN,controls->numberOpt));
     break;
     case 2:
+    pentagonalGraph(global,controls->numberN,uFormula(controls->numberN,controls->numberOpt));
     break;
     case 3:
     break;

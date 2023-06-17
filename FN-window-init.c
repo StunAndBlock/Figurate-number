@@ -93,7 +93,7 @@ void initScr(FN* global){
     XFillRectangle(global->dpy,pix,global->root.gc,MENU_BLOCK_WIDTH/4,MENU_BLOCK_HEIGHT/4,MENU_BLOCK_WIDTH-MENU_BLOCK_WIDTH/4-MENU_BLOCK_HEIGHT/4,MENU_BLOCK_HEIGHT-2*MENU_BLOCK_HEIGHT/4+2);
     XDrawRectangle(global->dpy,pix,global->menu.gc[1],0,0,MENU_BLOCK_WIDTH-1,MENU_BLOCK_HEIGHT-1);
     XDrawRectangle(global->dpy,pix,global->menu.gc[1],MENU_BLOCK_WIDTH/4,MENU_BLOCK_HEIGHT/4,MENU_BLOCK_WIDTH-MENU_BLOCK_WIDTH/4-MENU_BLOCK_HEIGHT/4-1,MENU_BLOCK_HEIGHT-2*MENU_BLOCK_HEIGHT/4+2-1);
-    XDrawString(global->dpy,pix,global->menu.gc[1],10,10,"n:",2);
+    XDrawString(global->dpy,pix,global->menu.gc[1],30,30,"n:",2);
     attr.background_pixmap=pix;
     global->menu.numberInput=
             XCreateWindow(global->dpy, global->root.win , ROOT_MIN_WIDTH/2-MENU_BLOCK_WIDTH/2,ROOT_MIN_HEIGHT/2-MENU_BLOCK_HEIGHT/2,

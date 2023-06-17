@@ -14,3 +14,7 @@ int keycodeToInt(int lastnumber,int keycode,int p){
 unsigned int triangularFormula(int n){
     return (pow(n,2)+n)/2;
 }
+
+unsigned int uFormula(int n,int option){
+    return  ((option+1)*pow(n,2)-(option-1)*n)/2;
+}
