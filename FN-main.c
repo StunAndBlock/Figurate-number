@@ -12,7 +12,9 @@ int main(){
     initGraphics(&global);
     initScr(&global);
     dispatch(&global);
+    
     freeAll(&global);
+
     return 0;
 
 }

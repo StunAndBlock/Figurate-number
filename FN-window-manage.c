@@ -136,7 +136,7 @@ void assembleFigure(FN* global,FNcontrols* controls){
   params.diameter=10;
   params.radius=params.diameter/2;
   params.goffset=params.d/(controls->numberN+1);
-  params.offs=(cot*)malloc(sizeof(cot)*controls->numberOpt/2+1);
+  params.offs=(cot*)malloc(sizeof(cot)*(controls->numberOpt/2+1));
   
   switch(controls->numberOpt){
     case 0:
