@@ -4,7 +4,7 @@
 unsigned int textSize(const char* text){
     unsigned int i=0;
     for(;*text;i++,text++);
-    return i-1;
+    return i;
 }
 int keycodeToInt(int lastnumber,int keycode,int p){
    return lastnumber*10+((keycode+1)%10);
