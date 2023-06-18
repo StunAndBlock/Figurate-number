@@ -3,7 +3,7 @@
 #pragma once
 #include "X11/Xlib.h"
 #include "X11/Xutil.h"
-
+#include "FN-calcs.h"
 /*struct FNlistwins {
     Window field;
     const char* text;
@@ -58,6 +58,7 @@ struct FNcontrols {
     unsigned int listMenuIsOpened;
     unsigned int inputIsOpened;
     unsigned int numericKeyPressedinRow;
+    int status;
 };
 typedef struct FNcontrols FNcontrols;
 
@@ -68,9 +69,11 @@ void initGraphics(FN* global);
 void configureMenu(FN* global,XEvent* event);
 void firstStart(FN*,unsigned char*);
 void buttonControl(FN* global,XEvent* event,FNcontrols*);
-void keyControl(FN* global,XEvent* event,FNcontrols*);
+int keyControl(FN* global,XEvent* event,FNcontrols*);
 void configureFigure(FN* global,XEvent* event);
 void assembleFigure(FN* global,FNcontrols* controls);
-
+void drawPlot(FN* global,cps* params);
 void triangularGraph(FN* global,int n,unsigned int pointsCount);
+void freeGraphics(FN* global);
+void freeAll(FN* global);
 #endif //FN_window_H_ end definition

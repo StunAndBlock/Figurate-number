@@ -12,13 +12,9 @@ int main(){
     initGraphics(&global);
     initScr(&global);
     dispatch(&global);
-
-
-
-
-
-
+    freeAll(&global);
     return 0;
+
 }
 
 
@@ -33,12 +29,11 @@ void dispatch(FN* global){
     controls.listMenuIsOpened=0;
     controls.inputIsOpened=0;
     controls.numericKeyPressedinRow=0;
-    while (1){
+    controls.status=1;
+    while (controls.status){
      XNextEvent(global->dpy, &event);
      switch (event.type) {
         case ConfigureNotify:
-        //fprintf(stderr,"{%d}\n",event.xconfigure.height);
-        //XDrawPoint(global->dpy,global->menu.win,global->menu.gc,199,event.xexpose.height);
         configureMenu(global,&event);
         configureFigure(global,&event);
         break;
@@ -46,22 +41,12 @@ void dispatch(FN* global){
         break;
         case ButtonPress:
         buttonControl(global,&event,&controls);
-       // if(event.xbutton.window==global->menu.field){
-         //   for(int i=0;i<MENU_LIST_AMMOUNT;i++)
-         //   XMapWindow(global->dpy,global->menu.list[i]);
-       // }
-        fprintf(stderr,"{%ld}\n",event.xbutton.window);
         break;
         case KeyPress:
-        keyControl(global,&event,&controls);
+        controls.status=keyControl(global,&event,&controls);
         break;
         default:
-
-        //fprintf(stderr,"%d : \t%d\n",event.type,i);
         break;
      }
     }
-    
-
-
 }

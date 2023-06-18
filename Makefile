@@ -20,7 +20,7 @@ FN-window-init.o: FN-window-init.c FN-window.h
 FN-window-manage.o: FN-window-manage.c FN-window.h
 	gcc -c FN-window-manage.c $(debug)
 FN-calcs.o: FN-calcs.c FN-calcs.h
-	gcc -c FN-calcs.c $(math)
+	gcc -c FN-calcs.c $(math) $(debug)
 
 clean:
 	rm -rf $(objects) $(bdir)/$(name)

@@ -1,7 +1,6 @@
 #include "FN-window.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "FN-calcs.h"
     static XWindowChanges values;
     static unsigned int valueMask;
   
@@ -46,9 +45,9 @@ void buttonControl(FN* global,XEvent* event,FNcontrols* controls){
       }
       controls->listMenuIsOpened=1;
     } else if(event->xbutton.window==global->menu.drawButton){
-      fprintf(stderr,"draw the option:%d with n:%d",controls->numberOpt,controls->numberN);
+      fprintf(stderr,"draw the option:%d with n:%d\n",controls->numberOpt,controls->numberN);
       if(controls->numberOpt!=-1 && controls->numberN>0){
-        XFillRectangle(global->dpy,global->figure.win,global->root.gc,0,0,600,600);
+        
         assembleFigure(global,controls);
       }
     }
@@ -64,7 +63,7 @@ void buttonControl(FN* global,XEvent* event,FNcontrols* controls){
       if(controls->numberOpt!=-1){
         XMapWindow(global->dpy,global->menu.numberInput);
         controls->inputIsOpened=1;
-        fprintf(stderr,"choosed option: %d",controls->numberOpt);
+        fprintf(stderr,"choosed option: %d\n",controls->numberOpt);
       }
     }
   }
@@ -81,7 +80,7 @@ void buttonControl(FN* global,XEvent* event,FNcontrols* controls){
 
 }
 
-void keyControl(FN* global,XEvent* event,FNcontrols* controls){
+int keyControl(FN* global,XEvent* event,FNcontrols* controls){
   const char* c;
   char buf[10];
   if(event->xkey.keycode>=FN_XK_1 && event->xkey.keycode<=FN_XK_9){
@@ -110,105 +109,80 @@ if(controls->numericKeyPressedinRow<3){
     }
     controls->listMenuIsOpened=0;
     
+  } else if (event->xkey.keycode==FN_XK_ESC){
+    fprintf(stderr,"\ndssd:%d\n",event->xkey.keycode);
+    return 0;
   }
-  
-}
-void triangularGraph(FN* global,int n,unsigned int pointsCount){
-  XPoint* points=(XPoint*)malloc(sizeof(XPoint)*pointsCount);
-  short d=600;
-  short radius=d/60;
-  short offset=d/(n+1);
-  short xoffset=offset;
-  short yoffset=d-offset;
-  //fprintf(stderr,"\n(%d %d %d)\n",offset,pointsCount,n);
-  int r=0;
-  for(int i=0,pointsInRow=n;i<n;i++,pointsInRow--,yoffset-=offset){
-    //points[r].y=yoffset;
-    for(int j=0,xoffset=offset+offset/2*i;j<pointsInRow;j++,xoffset+=offset){
-      points[r].x=xoffset;
-      points[r].y=yoffset;
-      r++;
-      fprintf(stderr,"\n(%d %d)\n", xoffset,yoffset);
-    }
-  }
-  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
-  free(points);
-}
-void squareGraph(FN* global,int n, unsigned int pointsCount){
-   XPoint* points=(XPoint*)malloc(sizeof(XPoint)*pointsCount);
-  short d=600;
-  short radius=d/60;
-  short offset=d/(n+1);
-  short xoffset=offset;
-  short yoffset=d-offset;
-  //fprintf(stderr,"\n(%d %d %d)\n",offset,pointsCount,n);
-  int r=0;
-  for(int i=0,pointsInRow=n;i<n;i++,pointsInRow--,yoffset-=offset){
-    //points[r].y=yoffset;
-    for(int j=0,xoffset=offset;j<n;j++,xoffset+=offset){
-      points[r].x=xoffset;
-      points[r].y=yoffset;
-      r++;
-      fprintf(stderr,"\n(%d %d)\n", xoffset,yoffset);
-    }
-  }
-  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
-  free(points);
-}
-void pentagonalGraph(FN* global,int n,unsigned int pointsCount){
-  XPoint* points=(XPoint*)malloc(sizeof(XPoint)*pointsCount);
-  short d=600;
-  short radius=d/60;
-  short offset=d/(n+1);
-  short xoffset=offset;
-  short yoffset=d-offset;
-  short xwingoffset=offset/3;
-  short ywingoffset=offset*2/3;
-  //fprintf(stderr,"\n(%d %d %d)\n",offset,pointsCount,n);
-  int r=0;
-  for(int i=0,pointsInRow=n;i<n;i++,pointsInRow--,yoffset-=offset){
-    //points[r].y=yoffset;
-    for(int j=0,xoffset=offset+offset/2*i;j<pointsInRow;j++,xoffset+=offset){
-      points[r].x=xoffset;
-      points[r].y=yoffset;
-      r++;
-     
-    }
-     fprintf(stderr,"\n(%d %d)\n", xoffset,yoffset);
-    for (int j=0,xwingoffset=xoffset-offset/3,ywingoffset=yoffset+offset*2/3;j<pointsInRow-1;j++,xwingoffset-=offset/3,ywingoffset-=offset*2/3){
-      points[r].x=xwingoffset;
-      points[r].y=ywingoffset;
-      r++;
-    }
-  }
-  for(int i=0;i<pointsCount;i++){
-  XDrawArc(global->dpy,global->figure.win,global->menu.gc[1],points[i].x-radius,points[i].y-radius,radius*2,radius*2,0,360*64);
-  }
-  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],points,pointsCount,CoordModeOrigin);
-  free(points);
+  return 1;
 }
 
+void drawPlot(FN* global,cps* params){
+  XFillRectangle(global->dpy,global->figure.win,global->root.gc,0,0,params->d,params->d);
+  for(int i=0;i<params->pointsCount;i++){
+  XDrawArc(global->dpy,global->figure.win,global->menu.gc[1],params->points[i].x-params->radius,params->points[i].y-params->radius,params->diameter,params->diameter,0,360*64);
+  }
+  XDrawPoints(global->dpy,global->figure.win,global->menu.gc[1],params->points,params->pointsCount,CoordModeOrigin);
+}
 
 void assembleFigure(FN* global,FNcontrols* controls){
+  XWindowAttributes xatr;
+  cps params;
+  XGetWindowAttributes(global->dpy,global->figure.win,&xatr);
+  params.d=xatr.height;
+  if(params.d/controls->numberN<12){
+  fprintf(stderr,"WARNING : n <%d> number is overcapping the density of the sceen,calculate optimal",controls->numberN);
+  controls->numberN=params.d/12;
+  }
+  params.diameter=10;
+  params.radius=params.diameter/2;
+  params.goffset=params.d/(controls->numberN+1);
+  params.offs=(cot*)malloc(sizeof(cot)*controls->numberOpt/2+1);
+  
   switch(controls->numberOpt){
     case 0:
-    triangularGraph(global,controls->numberN,triangularFormula(controls->numberN));
+    params.pointsCount=triangularFormula(controls->numberN);
+    assembleTriangularPlot(&params,controls->numberN);
+ 
     break;
     case 1:
-    squareGraph(global,controls->numberN,uFormula(controls->numberN,controls->numberOpt));
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleSquarePlot(&params,controls->numberN);
+ 
     break;
     case 2:
-    pentagonalGraph(global,controls->numberN,uFormula(controls->numberN,controls->numberOpt));
+    params.goffset=params.goffset*8/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assemblePentagonalPlot(&params,controls->numberN);
+  
     break;
     case 3:
+    params.goffset=params.goffset*8/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleHexagonalPlot(&params,controls->numberN);
+    
     break;
     case 4:
+    params.goffset=params.goffset*6/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleHeptagonalPlot(&params,controls->numberN);
     break;
     case 5:
+    params.goffset=params.goffset*6/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleOctagonalPlot(&params,controls->numberN);
     break;
     case 6:
+    params.goffset=params.goffset*6/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleNonagonalPlot(&params,controls->numberN);
     break;
     case 7:
+    params.goffset=params.goffset*6/10;
+    params.pointsCount=uFormula(controls->numberN,controls->numberOpt);
+    assembleDecagonalPlot(&params,controls->numberN);
     break;
     }
+    drawPlot(global,&params);
+    free(params.offs);
+    free(params.points);
 }

@@ -1,6 +1,5 @@
 #include "FN-window.h"
 #include "./materials/colours.h"
-#include "FN-calcs.h"
 void initDpy(FN* global){
  global->dpy = XOpenDisplay(NULL);
 }
@@ -29,7 +28,7 @@ void initScr(FN* global){
     hint.flags = (PMinSize);
     XSetNormalHints(global->dpy, global->root.win, &hint);
 
-    mask=(ExposureMask | ButtonPressMask | StructureNotifyMask);
+    mask=(ExposureMask | ButtonPressMask | KeyPressMask | StructureNotifyMask);
     XSelectInput(global->dpy,global->root.win,mask);
     XMapWindow(global->dpy,global->root.win);
     /*------------------------menu-----------------------------*/
@@ -140,4 +139,10 @@ void initGraphics(FN* global){
         XSetFont(global->dpy,global->menu.gc[1], fn->fid);
     }
 
+        XFreeFont(global->dpy,fn);
+}
+void freeAll(FN* global){
+  XFreeGC(global->dpy,global->root.gc);
+  XFreeGC(global->dpy,global->menu.gc[1]);
+  XCloseDisplay(global->dpy);
 }
