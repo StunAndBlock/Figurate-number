@@ -110,7 +110,7 @@ if(controls->numericKeyPressedinRow<3){
     controls->listMenuIsOpened=0;
     
   } else if (event->xkey.keycode==FN_XK_ESC){
-    fprintf(stderr,"\ndssd:%d\n",event->xkey.keycode);
+    
     return 0;
   }
   return 1;
